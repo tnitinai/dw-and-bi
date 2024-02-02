@@ -5,9 +5,18 @@
 
 I just love <strong>bold text</strong>.
 
-### Data Dictionary
+### Schema Information
 <table>
-  <thead></thead>
+  <thead>
+    <th>Table Name</th>
+    <th>Description</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>repos</td>
+      <td>ตารางเก็บข้อมูล repository จากตัวอย่าง</td>
+    </tr>
+  </tbody>
 </table>
 
 ### heading 3
