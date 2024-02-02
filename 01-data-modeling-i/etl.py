@@ -3,7 +3,7 @@ import json
 import os
 from typing import List
 
-import psycopg2 ## library to communicating to Progresql
+import psycopg2 ## library to communicate to Progresql
 
 
 def get_files(filepath: str) -> List[str]:
@@ -59,8 +59,13 @@ def process(cur, conn, filepath):
                 insert_statement = f"""
                     INSERT INTO actors (
                         id,
-                        login
-                    ) VALUES ({each["actor"]["id"]}, '{each["actor"]["login"]}')
+                        login,
+                        display_login
+                    ) VALUES (
+                        {each["actor"]["id"]}, 
+                        '{each["actor"]["login"]}',
+                        '{each["actor"]["display_login"]}'
+                    )
                     ON CONFLICT (id) DO NOTHING
                 """
                 # print(insert_statement)
@@ -71,14 +76,77 @@ def process(cur, conn, filepath):
                     INSERT INTO events (
                         id,
                         type,
-                        actor_id
-                    ) VALUES ('{each["id"]}', '{each["type"]}', '{each["actor"]["id"]}')
+                        actor_id,
+                        created_at
+                    ) VALUES (
+                        '{each["id"]}', 
+                        '{each["type"]}', 
+                        '{each["actor"]["id"]}',
+                        '{each["created_at"]}'
+                    )
                     ON CONFLICT (id) DO NOTHING
                 """
                 # print(insert_statement)
                 cur.execute(insert_statement)
 
                 conn.commit()
+                
+                # Insert data into repos table
+                insert_statement = f"""
+                    INSERT INTO repos (
+                        id,
+                        name,
+                        owner_id
+                    ) VALUES (
+                        '{each["repo"]["id"]}', 
+                        '{each["repo"]["name"]}', 
+                        '{each["actor"]["id"]}'
+                    )
+                    ON CONFLICT (id) DO NOTHING
+                """
+                # print(insert_statement)
+                cur.execute(insert_statement)
+
+                conn.commit()
+                
+                # Insert data into comments table
+                if(each["type"] == "IssueCommentEvent"):
+                    insert_statement = f"""
+                        INSERT INTO comments (
+                            id,
+                            repo_id,
+                            user_id,
+                            total_count,
+                            liked,
+                            unliked,
+                            laugh,
+                            hooray,
+                            confused,
+                            heart,
+                            rocket,
+                            eyes
+                        ) VALUES (
+                            '{each["payload"]["issue"]["id"]}', 
+                            '{each["repo"]["id"]}', 
+                            '{each["actor"]["id"]}',
+                            each["payload"]["issue"]["body"]["reactions"]["total_count"],
+                            each["payload"]["issue"]["body"]["reactions"]["+1"],
+                            each["payload"]["issue"]["body"]["reactions"]["-1"],
+                            each["payload"]["issue"]["body"]["reactions"]["laugh"],
+                            each["payload"]["issue"]["body"]["reactions"]["hooray"],
+                            each["payload"]["issue"]["body"]["reactions"]["confused"],
+                            each["payload"]["issue"]["body"]["reactions"]["heart"],
+                            each["payload"]["issue"]["body"]["reactions"]["rocket"],
+                            each["payload"]["issue"]["body"]["reactions"]["eyes"]
+                            
+                        )
+                        ON CONFLICT (id) DO NOTHING
+                    """
+                    # print(insert_statement)
+                    cur.execute(insert_statement)
+
+                    conn.commit()
+
 
 
 def main():

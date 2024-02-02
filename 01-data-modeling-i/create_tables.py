@@ -18,24 +18,21 @@ table_drop_issues = "DROP TABLE IF EXISTS issues CASCADE"
 
 table_create_actors = """
     CREATE TABLE IF NOT EXISTS actors (
-        id int,
+        id char(64),
         login text,
-        name text,
-        email text,
         display_login text,
-        followers_url text,
-        following_url text,
+        
         PRIMARY KEY(id)
     )
 """
 
 table_create_events = """
     CREATE TABLE IF NOT EXISTS events (
-        id int,
+        id char(64),
         type text,
-        actor_id int,
-        org_id text,
+        actor_id char(64),
         created_at timestamp,
+        
         PRIMARY KEY(id),
         CONSTRAINT fk_actor FOREIGN KEY(actor_id) REFERENCES actors(id)
     )
@@ -43,9 +40,9 @@ table_create_events = """
 
 table_create_repos = """
     CREATE TABLE IF NOT EXISTS repos (
-        id int,
+        id char(64),
         name text,
-        owner_id int,
+        owner_id char(64),
         PRIMARY KEY(id),
         CONSTRAINT fk_owner FOREIGN KEY(owner_id) REFERENCES actors(id)
         
@@ -54,10 +51,9 @@ table_create_repos = """
 
 table_create_comments = """
     CREATE TABLE IF NOT EXISTS comments (
-        id int,
-        repo_id int,
-        user_id int,
-        body text,
+        id char(64),
+        repo_id char(64),
+        user_id char(64),
         total_count int,
         liked int,
         unliked int,
@@ -76,9 +72,9 @@ table_create_comments = """
 
 table_create_issue_comments = """
     CREATE TABLE IF NOT EXISTS issue_comments (
-        id int,
-        repo_id int,
-        actor_id int,
+        id char(64),
+        repo_id char(64),
+        actor_id char(64),
         title text,
         comments int,
         created_at timestamp,
@@ -91,11 +87,11 @@ table_create_issue_comments = """
 
 table_create_commits = """
     CREATE TABLE IF NOT EXISTS commits (
-        sha text,
-        repo_id int,
+        sha char(256),
+        repo_id char(64),
         message text,
         size int,
-        author_id int,
+        author_id char(64),
         
         PRIMARY KEY(sha),
         CONSTRAINT fk_repo_commits FOREIGN KEY(repo_id) REFERENCES repos(id),
@@ -106,9 +102,9 @@ table_create_commits = """
 
 table_create_pull_requests = """
     CREATE TABLE IF NOT EXISTS pull_requests (
-        id int,
-        repo_id int,
-        actor_id int,
+        id char(64),
+        repo_id char(64),
+        actor_id char(64),
         body text,
         comments int,
         review_comments int,
@@ -127,9 +123,9 @@ table_create_pull_requests = """
 
 table_create_pull_request_reviews = """
     CREATE TABLE IF NOT EXISTS pull_request_reviews (
-        id int,
-        pull_request_id int,
-        actor_id int,
+        id char(64),
+        pull_request_id char(64),
+        actor_id char(64),
         body text,
         comments int,
         state text,
@@ -152,9 +148,9 @@ table_create_pull_request_reviews = """
 
 table_create_issues = """
     CREATE TABLE IF NOT EXISTS issues (
-        id int,
-        repo_id int,
-        actor_id int,
+        id char(64),
+        repo_id char(64),
+        actor_id char(64),
         title text,
         body text,
         
