@@ -6,15 +6,15 @@ import psycopg2
 PostgresCursor = NewType("PostgresCursor", psycopg2.extensions.cursor)
 PostgresConn = NewType("PostgresConn", psycopg2.extensions.connection)
 
-table_drop_events = "DROP TABLE IF EXISTS events"
-table_drop_actors = "DROP TABLE IF EXISTS actors"
-table_drop_repos = "DROP TABLE IF EXISTS repos"
-table_drop_comments = "DROP TABLE IF EXISTS comments"
-table_drop_issue_comments = "DROP TABLE IF EXISTS issue_comments"
-table_drop_commits = "DROP TABLE IF EXISTS commits"
-table_drop_pull_requests = "DROP TABLE IF EXISTS pull_requests"
-table_drop_pull_request_reviews = "DROP TABLE IF EXISTS pull_request_reviews"
-table_drop_issues = "DROP TABLE IF EXISTS issues"
+table_drop_events = "DROP TABLE IF EXISTS events CASCADE"
+table_drop_actors = "DROP TABLE IF EXISTS actors CASCADE"
+table_drop_repos = "DROP TABLE IF EXISTS repos CASCADE"
+table_drop_comments = "DROP TABLE IF EXISTS comments CASCADE"
+table_drop_issue_comments = "DROP TABLE IF EXISTS issue_comments CASCADE"
+table_drop_commits = "DROP TABLE IF EXISTS commits CASCADE"
+table_drop_pull_requests = "DROP TABLE IF EXISTS pull_requests CASCADE"
+table_drop_pull_request_reviews = "DROP TABLE IF EXISTS pull_request_reviews CASCADE"
+table_drop_issues = "DROP TABLE IF EXISTS issues CASCADE"
 
 table_create_actors = """
     CREATE TABLE IF NOT EXISTS actors (
@@ -31,11 +31,11 @@ table_create_actors = """
 
 table_create_events = """
     CREATE TABLE IF NOT EXISTS events (
-        id text,
+        id int,
         type text,
         actor_id int,
         org_id text,
-        created_at datetime,
+        created_at timestamp,
         PRIMARY KEY(id),
         CONSTRAINT fk_actor FOREIGN KEY(actor_id) REFERENCES actors(id)
     )
@@ -43,9 +43,9 @@ table_create_events = """
 
 table_create_repos = """
     CREATE TABLE IF NOT EXISTS repos (
-        id,
-        name,
-        owner_id,
+        id int,
+        name text,
+        owner_id int,
         PRIMARY KEY(id),
         CONSTRAINT fk_owner FOREIGN KEY(owner_id) REFERENCES actors(id)
         
@@ -54,10 +54,10 @@ table_create_repos = """
 
 table_create_comments = """
     CREATE TABLE IF NOT EXISTS comments (
-        id,
-        repo_id,
-        user_id,
-        body,
+        id int,
+        repo_id int,
+        user_id int,
+        body text,
         total_count int,
         liked int,
         unliked int,
@@ -70,71 +70,69 @@ table_create_comments = """
         
         PRIMARY KEY(id),
         CONSTRAINT fk_repo_comments FOREIGN KEY(repo_id) REFERENCES repos(id),
-        CONSTRAINT fk_user_comments FOREIGN KEY(user_id) REFERENCES actors(id),
-        
-        
+        CONSTRAINT fk_user_comments FOREIGN KEY(user_id) REFERENCES actors(id)
     )
 """
 
 table_create_issue_comments = """
     CREATE TABLE IF NOT EXISTS issue_comments (
-        id,
-        repo_id,
-        actor_id,
-        title,
-        comments,
-        created_at,
+        id int,
+        repo_id int,
+        actor_id int,
+        title text,
+        comments int,
+        created_at timestamp,
         
         PRIMARY KEY(id),
         CONSTRAINT fk_repo_issue_comments FOREIGN KEY(repo_id) REFERENCES repos(id),
-        CONSTRAINT fk_user_issue_comments FOREIGN KEY(user_id) REFERENCES actors(id),      
+        CONSTRAINT fk_actor_issue_comments FOREIGN KEY(actor_id) REFERENCES actors(id)    
     )
 """
 
 table_create_commits = """
     CREATE TABLE IF NOT EXISTS commits (
-        sha,
-        repo_id,
-        message,
-        size,
-        autor_id,
+        sha text,
+        repo_id int,
+        message text,
+        size int,
+        author_id int,
         
-        PRIMARY KEY(id),
+        PRIMARY KEY(sha),
         CONSTRAINT fk_repo_commits FOREIGN KEY(repo_id) REFERENCES repos(id),
-        CONSTRAINT fk_author_commits FOREIGN KEY(author_id) REFERENCES actors(id),
+        CONSTRAINT fk_author_commits FOREIGN KEY(author_id) REFERENCES actors(id)
         
     )
 """
 
 table_create_pull_requests = """
     CREATE TABLE IF NOT EXISTS pull_requests (
-        id,
-        repo_id,
-        actor_id,
-        body,
-        comments,
-        review_comments,
-        commits,
-        additions,
-        deletions,
-        changed_files,
-        created_at,
+        id int,
+        repo_id int,
+        actor_id int,
+        body text,
+        comments int,
+        review_comments int,
+        commits int,
+        additions int,
+        deletions int,
+        changed_files int,
+        created_at timestamp,
         
         PRIMARY KEY(id),
         CONSTRAINT fk_repo_pull_requests FOREIGN KEY(repo_id) REFERENCES repos(id),
-        CONSTRAINT fk_actor_pull_requests FOREIGN KEY(actor_id) REFERENCES actors(id),
+        CONSTRAINT fk_actor_pull_requests FOREIGN KEY(actor_id) REFERENCES actors(id)
         
     )
 """
 
 table_create_pull_request_reviews = """
     CREATE TABLE IF NOT EXISTS pull_request_reviews (
-        id,
-        pull_request_id,
-        actor_id,
-        body,
-        comments,
-        state,
+        id int,
+        pull_request_id int,
+        actor_id int,
+        body text,
+        comments int,
+        state text,
         total_count int,
         liked int,
         unliked int,
@@ -147,22 +145,22 @@ table_create_pull_request_reviews = """
         
         PRIMARY KEY(id),
         CONSTRAINT fk_actor_comments FOREIGN KEY(actor_id) REFERENCES actors(id),
-        CONSTRAINT fk_pull_request_pull_request_reviews FOREIGN KEY(pull_request_id) REFERENCES pull_requests(id),
+        CONSTRAINT fk_pull_request_pull_request_reviews FOREIGN KEY(pull_request_id) REFERENCES pull_requests(id)
         
     )
 """
 
 table_create_issues = """
     CREATE TABLE IF NOT EXISTS issues (
-        id,
-        repo_id,
-        actor_id,
-        title,
-        body,
+        id int,
+        repo_id int,
+        actor_id int,
+        title text,
+        body text,
         
         PRIMARY KEY(id),
         CONSTRAINT fk_repo_issues FOREIGN KEY(repo_id) REFERENCES repos(id),
-        CONSTRAINT fk_actor_issues FOREIGN KEY(actor_id) REFERENCES actor(id),
+        CONSTRAINT fk_actor_issues FOREIGN KEY(actor_id) REFERENCES actors(id)
     )
 """
 
@@ -187,7 +185,7 @@ drop_table_queries = [
     table_drop_commits,
     table_drop_pull_requests,
     table_drop_pull_request_reviews,
-    table_drop_issues,
+    table_drop_issues
 ]
 
 
