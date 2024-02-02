@@ -2,6 +2,9 @@
 
 ## 01-data-modeling-1
 <p>ในตอนนี้ เราจะพูดถึงการนำข้อมูล json files จาก Github เพื่อนำมาสร้างเป็น Postgres SQL</p>
+
+I just love <strong>bold text</strong>.
+
 ### Data Dictionary
 <table>
   <thead></thead>
