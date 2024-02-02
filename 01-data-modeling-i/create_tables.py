@@ -10,7 +10,6 @@ table_drop_events = "DROP TABLE IF EXISTS events CASCADE"
 table_drop_actors = "DROP TABLE IF EXISTS actors CASCADE"
 table_drop_repos = "DROP TABLE IF EXISTS repos CASCADE"
 table_drop_comments = "DROP TABLE IF EXISTS comments CASCADE"
-table_drop_issue_comments = "DROP TABLE IF EXISTS issue_comments CASCADE"
 table_drop_commits = "DROP TABLE IF EXISTS commits CASCADE"
 table_drop_pull_requests = "DROP TABLE IF EXISTS pull_requests CASCADE"
 table_drop_pull_request_reviews = "DROP TABLE IF EXISTS pull_request_reviews CASCADE"
@@ -54,6 +53,7 @@ table_create_comments = """
         id char(64),
         repo_id char(64),
         user_id char(64),
+        comments int,
         total_count int,
         liked int,
         unliked int,
@@ -63,25 +63,12 @@ table_create_comments = """
         heart int,
         rocket int,
         eyes int,
+        created_at timestamp,
+        
         
         PRIMARY KEY(id),
         CONSTRAINT fk_repo_comments FOREIGN KEY(repo_id) REFERENCES repos(id),
         CONSTRAINT fk_user_comments FOREIGN KEY(user_id) REFERENCES actors(id)
-    )
-"""
-
-table_create_issue_comments = """
-    CREATE TABLE IF NOT EXISTS issue_comments (
-        id char(64),
-        repo_id char(64),
-        actor_id char(64),
-        title text,
-        comments int,
-        created_at timestamp,
-        
-        PRIMARY KEY(id),
-        CONSTRAINT fk_repo_issue_comments FOREIGN KEY(repo_id) REFERENCES repos(id),
-        CONSTRAINT fk_actor_issue_comments FOREIGN KEY(actor_id) REFERENCES actors(id)    
     )
 """
 
@@ -165,7 +152,6 @@ create_table_queries = [
     table_create_events,
     table_create_repos,
     table_create_comments,
-    table_create_issue_comments,
     table_create_commits,
     table_create_pull_requests,
     table_create_pull_request_reviews,
@@ -177,7 +163,6 @@ drop_table_queries = [
     table_drop_actors,
     table_drop_repos,
     table_drop_comments,
-    table_drop_issue_comments,
     table_drop_commits,
     table_drop_pull_requests,
     table_drop_pull_request_reviews,

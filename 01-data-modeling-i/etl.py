@@ -110,12 +110,13 @@ def process(cur, conn, filepath):
                 conn.commit()
                 
                 # Insert data into comments table
-                if(each["type"] == "IssueCommentEvent"):
+                if((each["type"] == "IssueCommentEvent") or (each["type"] == "IssuesEvent")):
                     insert_statement = f"""
                         INSERT INTO comments (
                             id,
                             repo_id,
                             user_id,
+                            comments,
                             total_count,
                             liked,
                             unliked,
@@ -124,21 +125,23 @@ def process(cur, conn, filepath):
                             confused,
                             heart,
                             rocket,
-                            eyes
+                            eyes,
+                            created_at
                         ) VALUES (
                             '{each["payload"]["issue"]["id"]}', 
                             '{each["repo"]["id"]}', 
                             '{each["actor"]["id"]}',
-                            each["payload"]["issue"]["body"]["reactions"]["total_count"],
-                            each["payload"]["issue"]["body"]["reactions"]["+1"],
-                            each["payload"]["issue"]["body"]["reactions"]["-1"],
-                            each["payload"]["issue"]["body"]["reactions"]["laugh"],
-                            each["payload"]["issue"]["body"]["reactions"]["hooray"],
-                            each["payload"]["issue"]["body"]["reactions"]["confused"],
-                            each["payload"]["issue"]["body"]["reactions"]["heart"],
-                            each["payload"]["issue"]["body"]["reactions"]["rocket"],
-                            each["payload"]["issue"]["body"]["reactions"]["eyes"]
-                            
+                            {each["payload"]["issue"]["comments"]},
+                            {each["payload"]["issue"]["reactions"]["total_count"]},
+                            {each["payload"]["issue"]["reactions"]["+1"]},
+                            {each["payload"]["issue"]["reactions"]["-1"]},
+                            {each["payload"]["issue"]["reactions"]["laugh"]},
+                            {each["payload"]["issue"]["reactions"]["hooray"]},
+                            {each["payload"]["issue"]["reactions"]["confused"]},
+                            {each["payload"]["issue"]["reactions"]["heart"]},
+                            {each["payload"]["issue"]["reactions"]["rocket"]},
+                            {each["payload"]["issue"]["reactions"]["eyes"]},
+                            '{each["created_at"]}'
                         )
                         ON CONFLICT (id) DO NOTHING
                     """
@@ -147,7 +150,63 @@ def process(cur, conn, filepath):
 
                     conn.commit()
 
+                # Insert data into commits table
+                if(each["type"] == "PushEvent"):
+                    insert_statement = f"""
+                        INSERT INTO commits (
+                            sha,
+                            repo_id,
+                            message,
+                            size,
+                            author_id
+                        ) VALUES (
+                            '{each["payload"]["commits"][0]["sha"]}', 
+                            '{each["repo"]["id"]}', 
+                            '{each["payload"]["commits"][0]["message"]}', 
+                            '{each["payload"]["size"]}', 
+                            '{each["actor"]["id"]}'
+                        )
+                        ON CONFLICT (sha) DO NOTHING
+                    """
+                    # print(insert_statement)
+                    cur.execute(insert_statement)
 
+                    conn.commit()
+                    
+                    # Insert data into commits table
+                
+                # Insert data into pull_requests table
+                if(each["type"] == "PullRequestEvent"):
+                    insert_statement = f"""
+                        INSERT INTO pull_requests (
+                            id,
+                            repo_id,
+                            actor_id,
+                            body,
+                            comments,
+                            review_comments,
+                            additions,
+                            deletions,
+                            changed_files,
+                            created_at
+                        ) VALUES (
+                            '{each["id"]}', 
+                            '{each["repo"]["id"]}', 
+                            '{each["actor"]["id"]}',
+                            '{each["payload"]["pull_request"]["body"]}', 
+                            {each["payload"]["pull_request"]["comments"]}, 
+                            {each["payload"]["pull_request"]["review_comments"]}, 
+                            {each["payload"]["pull_request"]["additions"]}, 
+                            {each["payload"]["pull_request"]["deletions"]}, 
+                            {each["payload"]["pull_request"]["changed_files"]}, 
+                            '{each["created_at"]}'
+                        )
+                        ON CONFLICT (id) DO NOTHING
+                    """
+                    # print(insert_statement)
+                    cur.execute(insert_statement)
+
+                    conn.commit()
 
 def main():
     conn = psycopg2.connect(
