@@ -31,30 +31,7 @@ def process(cur, conn, filepath):
         with open(datafile, "r") as f:
             data = json.loads(f.read())
             for each in data:
-                # Print some sample data
                 
-                if each["type"] == "IssueCommentEvent":
-                    print(
-                        each["id"], 
-                        each["type"],
-                        each["actor"]["id"],
-                        each["actor"]["login"],
-                        each["repo"]["id"],
-                        each["repo"]["name"],
-                        each["created_at"],
-                        each["payload"]["issue"]["url"],
-                    )
-                else:
-                    print(
-                        each["id"], 
-                        each["type"],
-                        each["actor"]["id"],
-                        each["actor"]["login"],
-                        each["repo"]["id"],
-                        each["repo"]["name"],
-                        each["created_at"],
-                    )
-
                 # Insert data into tables here
                 insert_statement = f"""
                     INSERT INTO actors (
@@ -156,13 +133,11 @@ def process(cur, conn, filepath):
                         INSERT INTO commits (
                             sha,
                             repo_id,
-                            message,
                             size,
                             author_id
                         ) VALUES (
                             '{each["payload"]["commits"][0]["sha"]}', 
                             '{each["repo"]["id"]}', 
-                            '{each["payload"]["commits"][0]["message"]}', 
                             '{each["payload"]["size"]}', 
                             '{each["actor"]["id"]}'
                         )
@@ -182,7 +157,6 @@ def process(cur, conn, filepath):
                             id,
                             repo_id,
                             actor_id,
-                            body,
                             comments,
                             review_comments,
                             additions,
@@ -193,7 +167,6 @@ def process(cur, conn, filepath):
                             '{each["id"]}', 
                             '{each["repo"]["id"]}', 
                             '{each["actor"]["id"]}',
-                            '{each["payload"]["pull_request"]["body"]}', 
                             {each["payload"]["pull_request"]["comments"]}, 
                             {each["payload"]["pull_request"]["review_comments"]}, 
                             {each["payload"]["pull_request"]["additions"]}, 

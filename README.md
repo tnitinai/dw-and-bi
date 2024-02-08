@@ -27,16 +27,8 @@
       <td>ข้อมูล comments ที่เกิดใน repos (repo_id) จาก users (actor_id) พร้อมทั้งเก็บข้อมูล reactions ของ comments</td>
     </tr>
     <tr>
-      <td>issues_comments</td>
-      <td>เก็บข้อมูลปัญหาที่เกิดใน comments ของ repos (repo_id) จาก users (actor_id) </td>
-    </tr>
-    <tr>
       <td>commits</td>
       <td>ข้อมูลการ commits ที่เกิดใน repos (repo_id) และแสดงจำนวน commits ในแต่ละครั้ง</td>
-    </tr>
-    <tr>
-      <td>issues</td>
-      <td>เก็บข้อมูล issue ของ repos (repo_id) จาก users (actor_id)</td>
     </tr>
     <tr>
       <td>pull_requests</td>

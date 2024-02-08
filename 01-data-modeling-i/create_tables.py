@@ -13,7 +13,6 @@ table_drop_comments = "DROP TABLE IF EXISTS comments CASCADE"
 table_drop_commits = "DROP TABLE IF EXISTS commits CASCADE"
 table_drop_pull_requests = "DROP TABLE IF EXISTS pull_requests CASCADE"
 table_drop_pull_request_reviews = "DROP TABLE IF EXISTS pull_request_reviews CASCADE"
-table_drop_issues = "DROP TABLE IF EXISTS issues CASCADE"
 
 table_create_actors = """
     CREATE TABLE IF NOT EXISTS actors (
@@ -133,20 +132,6 @@ table_create_pull_request_reviews = """
     )
 """
 
-table_create_issues = """
-    CREATE TABLE IF NOT EXISTS issues (
-        id char(64),
-        repo_id char(64),
-        actor_id char(64),
-        title text,
-        body text,
-        
-        PRIMARY KEY(id),
-        CONSTRAINT fk_repo_issues FOREIGN KEY(repo_id) REFERENCES repos(id),
-        CONSTRAINT fk_actor_issues FOREIGN KEY(actor_id) REFERENCES actors(id)
-    )
-"""
-
 create_table_queries = [
     table_create_actors,
     table_create_events,
@@ -155,7 +140,6 @@ create_table_queries = [
     table_create_commits,
     table_create_pull_requests,
     table_create_pull_request_reviews,
-    table_create_issues,
     
 ]
 drop_table_queries = [
@@ -166,7 +150,6 @@ drop_table_queries = [
     table_drop_commits,
     table_drop_pull_requests,
     table_drop_pull_request_reviews,
-    table_drop_issues
 ]
 
 
