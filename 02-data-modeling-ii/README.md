@@ -1,7 +1,7 @@
 # DS525 Data Warehouse and Business Intelligence
 
 ## 02-data-modeling-ii
-<p>ในตอนนี้ เราจะพูดถึงการนำข้อมูล json files จาก Github เพื่อนำมาสร้างเป็น Cassandra ซึ่งเป๋น NoSQL</p>
+<p>ในตอนนี้ เราจะพูดถึงการนำข้อมูล json files จาก Github เพื่อนำมาสร้างเป็น Cassandra ซึ่งเป็น NoSQL</p>
 
 ### ข้อมูล Table
 <ul>
