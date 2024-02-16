@@ -1,7 +1,7 @@
 # DS525 Data Warehouse and Business Intelligence
 
 ## 02-data-modeling-ii
-<p>ในตอนนี้ เราจะพูดถึงการนำข้อมูล json files จาก Github เพื่อนำมาสร้างเป็น Cassandra ซึ่งเป๋น NoSQL</p>
+<p>ในตอนนี้ เราจะพูดถึงการนำข้อมูล json files จาก Github เพื่อนำมาสร้างเป็น Cassandra ซึ่งเป็น NoSQL</p>
 
 ### ข้อมูล Table
 <ul>
@@ -17,3 +17,5 @@
   <li>ติดตั้ง Cassandra Module สำหรับเชื่อมต่อระหว่าง Cassandra และ Python โดยใช้คำสั่ง pip install cassandra-driver</li>
   <li>สั่งอ่านไฟล์ etl.py โดยใช้คำสั่ง python etl.py</li>
 </ol>
+
+https://us02web.zoom.us/j/6168217916?pwd=bVZyL2R5SzBNaTNhZTZtYmpUUzdndz09#success
