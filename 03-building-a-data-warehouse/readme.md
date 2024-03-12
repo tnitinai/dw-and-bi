@@ -18,4 +18,29 @@
 
 **Service Account มักจะมีไฟล์ JSON ที่เก็บข้อมูลการรับรองตัวตน (credentials) ซึ่งสามารถใช้ในการตั้งค่าและใช้งาน Service Account ในแอปพลิเคชันหรือระบบของคุณได้**
 
-3. ใน CodeSpace ให้สร้าง folder ชื่อ credentials ไว้ที่ root และเพื่อป้องกันการ commit credentials ไปยัง GitHub ให้เปิด file ขื่อว่า .gitignore และระบุ 
+3. ใน CodeSpace ให้สร้าง folder ชื่อ credentials ไว้ที่ root และเพื่อป้องกันการ commit credentials ไปยัง GitHub ให้เปิด file ขื่อว่า .gitignore และระบุ credentials เพื่อบอก Git ว่า ไม่ track file เหล่านี้
+4. ให้ cd ไปหา working directory โดยใช้คำสั่ง
+   ```python
+   cd 03-building-a-data-warehouse
+   ```
+6. ใช้คำสั่งเหล่านี้เพื่อสร้าง environment และ install packages ต่างๆ
+```python
+python -m venv ENV
+source ENV/bin/activate
+pip install -r requirements.txt
+```
+5. ให้ระบุข้อมูลต่อไปนี้
+  ```python
+keyfile = "YOUR_KEYFILE_PATH"
+    service_account_info = json.load(open(keyfile))
+    credentials = service_account.Credentials.from_service_account_info(service_account_info)
+
+    # โค้ดส่วนนี้จะเป็นการสร้าง Client เชื่อมต่อไปยังโปรเจค GCP ของเรา โดยใช้ Credentials ที่
+    # สร้างจากโค้ดข้างต้น
+    project_id = "YOUR_GCP_PROJECT"
+```
+7. สั่ง run file etl.py
+   ```python
+   python ety.py
+   ```
+8. กลับไปดู Google BigQuery จะพบว่า มีข้อมูลเพิ่มเข้ามาตามไฟล์ที่เรา run etl.py
