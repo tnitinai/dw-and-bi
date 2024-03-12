@@ -36,13 +36,13 @@ def main(dataset_id, table_id, file_path):
     # keyfile = os.environ.get("KEYFILE_PATH")
     #
     # แต่เพื่อความง่ายเราสามารถกำหนด File Path ไปได้เลยตรง ๆ
-    keyfile = "../credentials/github-dw525-load-data-to-bigq.json"
+    keyfile = "../credentials/ds525-417015-41a900218783.json"
     service_account_info = json.load(open(keyfile))
     credentials = service_account.Credentials.from_service_account_info(service_account_info)
 
     # โค้ดส่วนนี้จะเป็นการสร้าง Client เชื่อมต่อไปยังโปรเจค GCP ของเรา โดยใช้ Credentials ที่
     # สร้างจากโค้ดข้างต้น
-    project_id = "skilled-box-413911"
+    project_id = "ds525-417015"
     client = bigquery.Client(
         project=project_id,
         credentials=credentials,
