@@ -1,6 +1,6 @@
-# Building a Data Lake
+# 04 Building a Data Lake
 
-เพื่อให้เราสามารถสร้างไฟล์ได้จาก Jupyter Lab ให้รันคำสั่งด้านล่างนี้
+สำหรับโปรเจคในครั้งนี้ จะเป็นการใช้ PySpark ใน Jupyter Notebook ที้รันผ่าน CodeSpace อีกที ซึ่งมีเป้าหมายเพื่อการนำ github_events file จำนวน 5 files แล้วผ่านกระบวนการ ETL เพื่ออัพโหลดไฟล์กลับไปที่ Google Cloud Storage
 
 ```sh
 sudo chmod 777 .
