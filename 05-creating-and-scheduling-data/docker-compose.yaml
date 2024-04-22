@@ -217,31 +217,31 @@ services:
       - -c
       - airflow
 
-  warehouse:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    volumes:
-      - warehouse-db-volume:/var/lib/postgresql/data
+  # warehouse:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: postgres
+  #   volumes:
+  #     - warehouse-db-volume:/var/lib/postgresql/data
 
-  sqlpad:
-    image: sqlpad/sqlpad:6.11.2
-    restart: always
-    depends_on:
-      - warehouse
-    environment:
-      SQLPAD_ADMIN: admin@swu.ac.th
-      SQLPAD_ADMIN_PASSWORD: admin
-      SQLPAD_CONNECTIONS__pgdb__name: Warehouse
-      SQLPAD_CONNECTIONS__pgdb__driver: postgres
-      SQLPAD_CONNECTIONS__pgdb__host: warehouse
-      SQLPAD_CONNECTIONS__pgdb__database: postgres
-      SQLPAD_CONNECTIONS__pgdb__username: postgres
-      SQLPAD_CONNECTIONS__pgdb__password: postgres
-    ports:
-      - 3000:3000
+  # sqlpad:
+  #   image: sqlpad/sqlpad:6.11.2
+  #   restart: always
+  #   depends_on:
+  #     - warehouse
+  #   environment:
+  #     SQLPAD_ADMIN: admin@swu.ac.th
+  #     SQLPAD_ADMIN_PASSWORD: admin
+  #     SQLPAD_CONNECTIONS__pgdb__name: Warehouse
+  #     SQLPAD_CONNECTIONS__pgdb__driver: postgres
+  #     SQLPAD_CONNECTIONS__pgdb__host: warehouse
+  #     SQLPAD_CONNECTIONS__pgdb__database: postgres
+  #     SQLPAD_CONNECTIONS__pgdb__username: postgres
+  #     SQLPAD_CONNECTIONS__pgdb__password: postgres
+  #   ports:
+  #     - 3000:3000
 
 volumes:
   postgres-db-volume:
