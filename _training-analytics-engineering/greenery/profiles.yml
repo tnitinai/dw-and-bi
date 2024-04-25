@@ -1,0 +1,12 @@
+greenery:
+  outputs:
+    dev:
+      dbname: greenery
+      host: localhost
+      pass: postgres
+      port: 5432
+      schema: dbt_greenery
+      threads: 1
+      type: postgres
+      user: postgres
+  target: dev
