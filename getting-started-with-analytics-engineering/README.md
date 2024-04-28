@@ -1,30 +1,15 @@
-# Getting Started with Analytics Engineering
+# 06 Analytics Engineering
 
-## Files/Folders and What They Do
+ในบทนี้ เราจะใช้ dbt ในการทำ data warehouse โดยใช้ข้อมูลจาก greenery store
 
-| Name | Description |
-| - | - |
-| `.devcontainer/devcontainer.json` | A file that tells VS Code how to access (or create) a development container with a well-defined tool and runtime stack |
-| `csv_files/` | A folder that contains CSV files used for testing `dbt seed` |
-| `setup/` | A folder that contains data and scripts used for initializing the Postgres database used in this project |
-| `yaml_files/` | A folder that contains the YAML file examples such as `profiles.yml` or `src.yml` |
-| `.gitignore` | A file that specifies intentionally untracked files that Git should ignore |
-| `LICENSE` | A license of this repo |
-| `Makefile` | A Makefile file which defines set of tasks to be executed |
-| `README.md` | README file that provides the setup instruction on this project |
-| `docker-compose.yml` | A Docker Compose file that runs a Postgres database and SQLPad used in this project |
-| `greenery-dbdiagram.txt` | A file that provides code for drawing an ER diagram on [dbdiagram.io](https://dbdiagram.io/home) |
-| `requirements.txt` | A file that contains Python package dependencies for this code repository |
 
-## Getting Started
-
-To start the Docker compose:
+## 1. ติดตั้ง packages ต่างๆ ของ Docker ในขั้นตอนนี้ จะมีการ dump data ของ greenery ใน Postgresql ซึ่ง run ใน port:5432 และมีหน้า Database manager ชื่อ sqlpad ใน port:3000
 
 ```sh
-make up
+docker compose up
 ```
 
-### To Set Up and Activate Your Python Virtual Environment
+## 2. ติดตั้ง packages/ applications ที่กำหนดใน requirements file
 
 ```bash
 python -m venv ENV
@@ -32,37 +17,24 @@ source ENV/bin/activate
 pip install -r requirements.txt
 ```
 
-### To Initialize A dbt Project
+## 3. เปิด Terminal ใหม่ แล้ว cd ไปหา ชื่อโปรเจค จากนั้นใช้คำสั่ง dbt init เพื่อเริ่มการใข้งาน dbt (ใส่ชื่อ project ว่า greenery) และระบุข้อมูลที่ dbt ต้องการ (ข้อมูล database connection)
 
 ```bash
 dbt init
 ```
 
-**Note:** Let's specify the project name `greenery`.
-
-### To Set Up Your dbt Profile
-
-1. Change the directory to your dbt project.
-
-    ```bash
-    cd <dbt_project_name>
-    ```
-
-1. Run the following command to copy the profiles example file to the real
-   profiles file in the project folder.
+## 3. ย้ายหรือคัดลอกไฟล์ profiles.yml ซึ่งเป็นไฟล์ที่ระบุค่า configuration สำหรับการติดต่อกับ database โดยใช้คำสั่ง
 
     ```bash
     cp ../yaml_files/profiles.yml .
     ```
-
-1. Edit the content in the `profiles.yml` file by changing the output and
-   target to your name (e.g., `dbt_john`), and save. See the example below.
+## 4. เปิดไฟล์ profiles.yml และแก้ไข schema ให้เป็นชื่ออื่นๆ (แนะนำ dbt_<any_name>)
 
     ```yaml
     greenery:
 
       outputs:
-        dbt_zkan:
+        dbt_greenery:
           type: postgres
           threads: 1
           host: localhost
@@ -70,7 +42,7 @@ dbt init
           user: postgres
           pass: "{{ env_var('DBT_ENV_SECRET_PG_PASSWORD') }}"
           dbname: greenery
-          schema: dbt_zkan
+          schema: dbt_greenery
 
         prod:
           type: postgres
@@ -82,46 +54,31 @@ dbt init
           dbname: greenery
           schema: prod
 
-      target: dbt_zkan
+      target: dbt_greenery
     ```
 
-1. Set the environment variable.
+## 5. ไปที่ folder greenery > models สร้าง folder ว่า staging และ marts
 
-    ```bash
-    export DBT_ENV_SECRET_PG_PASSWORD=postgres
-    ```
+## 6. ในขั้นตอนนี้จะทำตัวอย่างเพียง 1 ไฟล์ โดยการสร้าง file ชื่อ mrt__greenery_order_details.sql และระบุข้อมูลดังนี้
+  ```sql
+    select 
+    o.order_id,
+    p.name as product_name,
+    p.price as unit_price,
+    o.quantity
+    
+    from {{ source('greenery', 'products') }} as p
+    right join {{ source('greenery', 'order_items') }} as o
 
-1. We then should be able to use dbt now. :-)
+    on p.product_id = o.product_id
+  ```
 
-### To Debug The dbt Project
+## 7. ใช้คำสั่ง dbt debug เพื่อทดสอบ
+  ```bash
+    dbt debug
+  ```
 
-```bash
-export DBT_ENV_SECRET_PG_PASSWORD=postgres
-cd <dbt_project_name>
-dbt debug
-```
-
-### To Create Your Data Models
-
-```bash
-export DBT_ENV_SECRET_PG_PASSWORD=postgres
-cd <dbt_project_name>
-dbt run
-```
-
-### To Test Your Data Models
-
-```bash
-export DBT_ENV_SECRET_PG_PASSWORD=postgres
-cd <dbt_project_name>
-dbt test
-```
-
-### To Generate The dbt Documentation and Serve It
-
-```bash
-export DBT_ENV_SECRET_PG_PASSWORD=postgres
-cd <dbt_project_name>
-dbt docs generate
-dbt docs serve
-```
+## 8. หากไม่มีข้อผิดพลาด ให้ใช้คำสั่ง  dbt run และดูผลลัพธ์ได้ที่ sqlpad
+  ```bash
+    dbt run
+  ```
